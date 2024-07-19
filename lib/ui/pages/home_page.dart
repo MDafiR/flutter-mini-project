@@ -1,6 +1,8 @@
+import 'package:bank_sha/blocs/auth/auth_bloc.dart';
 import 'package:bank_sha/shared/shared_methods.dart';
 import 'package:bank_sha/shared/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -85,146 +87,167 @@ class HomePage extends StatelessWidget {
   }
 
   Widget buildProfile(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 40, left: 24, right: 24),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Howdy,',
-              style: greyTextStyle.copyWith(
-                fontSize: 16,
-                fontWeight: regular,
-              ),
-            ),
-            Text(
-              'shaynahan,',
-              style: blackTextStyle.copyWith(
-                fontSize: 20,
-                fontWeight: semiBold,
-              ),
-            ),
-          ],
-        ),
-        InkWell(
-          onTap: () {
-            Navigator.pushNamed(context, '/profile');
-          },
-          child: Container(
-            width: 60,
-            height: 60,
-            decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                    image: AssetImage('assets/img_profile.png'))),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: Container(
-                width: 16,
-                height: 16,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: whiteColor,
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.check_circle,
-                    color: greenColor,
-                    size: 14,
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthSuccess) {
+          return Container(
+            margin: const EdgeInsets.only(top: 40, left: 24, right: 24),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Howdy,',
+                        style: greyTextStyle.copyWith(
+                          fontSize: 16,
+                          fontWeight: regular,
+                        ),
+                      ),
+                      Text(
+                        state.user.username.toString(),
+                        style: blackTextStyle.copyWith(
+                          fontSize: 20,
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ]),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/profile');
+                    },
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: state.user.profilePicture == null
+                                  ? const AssetImage('assets/img_profile.png')
+                                  : NetworkImage(state.user.profilePicture!)
+                                      as ImageProvider)),
+                      child: state.user.verified == 1
+                          ? Align(
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                width: 16,
+                                height: 16,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: whiteColor,
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.check_circle,
+                                    color: greenColor,
+                                    size: 14,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : null,
+                    ),
+                  ),
+                ]),
+          );
+        }
+        return Container();
+      },
     );
   }
 
   Widget builWalletCard() {
-    return Container(
-      width: double.infinity,
-      height: 220,
-      margin: const EdgeInsets.only(top: 30, left: 24, right: 24),
-      padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        image: const DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage('assets/img_bg_card.png'),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Madelina Bond',
-            style: whiteTextStyle.copyWith(
-              fontSize: 18,
-              fontWeight: medium,
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthSuccess) {
+          return Container(
+            width: double.infinity,
+            height: 220,
+            margin: const EdgeInsets.only(top: 30, left: 24, right: 24),
+            padding: const EdgeInsets.all(30),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              image: const DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage('assets/img_bg_card.png'),
+              ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                '****',
-                style: whiteTextStyle.copyWith(
-                  fontSize: 18,
-                  fontWeight: medium,
-                  letterSpacing: 7,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  state.user.name.toString(),
+                  style: whiteTextStyle.copyWith(
+                    fontSize: 18,
+                    fontWeight: medium,
+                  ),
                 ),
-              ),
-              Text(
-                '****',
-                style: whiteTextStyle.copyWith(
-                  fontSize: 18,
-                  fontWeight: medium,
-                  letterSpacing: 7,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      '****',
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 18,
+                        fontWeight: medium,
+                        letterSpacing: 7,
+                      ),
+                    ),
+                    Text(
+                      '****',
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 18,
+                        fontWeight: medium,
+                        letterSpacing: 7,
+                      ),
+                    ),
+                    Text(
+                      '****',
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 18,
+                        fontWeight: medium,
+                        letterSpacing: 7,
+                      ),
+                    ),
+                    Text(
+                      state.user.cardNumber!.substring(12, 16),
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 18,
+                        fontWeight: medium,
+                        letterSpacing: 7,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                '****',
-                style: whiteTextStyle.copyWith(
-                  fontSize: 18,
-                  fontWeight: medium,
-                  letterSpacing: 7,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Balance',
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 14,
+                        fontWeight: regular,
+                      ),
+                    ),
+                    Text(
+                      'Rp${formatCurrency(state.user.balance ?? 0)}',
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 24,
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                '1280',
-                style: whiteTextStyle.copyWith(
-                  fontSize: 18,
-                  fontWeight: medium,
-                  letterSpacing: 7,
-                ),
-              ),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Balance',
-                style: whiteTextStyle.copyWith(
-                  fontSize: 14,
-                  fontWeight: regular,
-                ),
-              ),
-              Text(
-                'Rp${formatCurrency(12500)}',
-                style: whiteTextStyle.copyWith(
-                  fontSize: 24,
-                  fontWeight: semiBold,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            ),
+          );
+        }
+        return Container();
+      },
     );
   }
 
