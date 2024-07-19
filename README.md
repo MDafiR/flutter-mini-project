@@ -1,4 +1,4 @@
-# E wallet App
+# E-wallet App
 
 A new Flutter project.
 
